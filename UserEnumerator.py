@@ -71,7 +71,7 @@ if len(accounts_with_uid_0) > 1:
     other_account_that_has_uid_0_username = extract_account_username(other_account_that_has_uid_0)
 
     #Display recommendations.
-    print("\n" + "RECOMMENDATIONS: Immediately delete user account '" + other_account_that_has_uid_0_username + "'. Investigate system for possible cyber attack involving user account '" + other_account_that_has_uid_0_username + "'." + "\n\n")
+    print("\n" + "RECOMMENDATIONS: Immediately delete user account '" + other_account_that_has_uid_0_username + "'. Investigate system for possible cyber attack involving user account '" + other_account_that_has_uid_0_username + "'." + "\n")
 
 #Display 'GOOD' message and give no recommendations.
 else:
@@ -83,7 +83,7 @@ else:
         print("    - ",account)
     
     #Display recommendations.
-    print("\n" + "RECOMMENDATIONS: None" + "\n\n")
+    print("\n" + "RECOMMENDATIONS: None" + "\n")
 
 print("====================================================================" + "\n" + "#2: List Of Only User Accounts (Not System Accounts)" + "\n" + "====================================================================")
 account_usernames = [] #List that stores only the account username field from accounts extracted from /etc/passwd.
@@ -94,9 +94,12 @@ for account in only_user_accounts:
     account_usernames.append(account_username)
     print("    -" + account_username)
 
-print("\n")
+print("")
+
+account_with_longest_username = max(account_usernames, key=len) #This info is useful in properly formatting the output.
 
 print("====================================================================" + "\n" + "#3: List Groups Of User Accounts. Those With Sudo Access Are Flagged" + "\n" + "====================================================================")
+print("Groups Of Every User Account: " + "\n" + "-----------------------------")
 
 accounts_with_sudo_access = []
 
@@ -119,15 +122,47 @@ for account in account_usernames:
         accounts_with_sudo_access.append(account)
 
     #For formatting the print statement
-    spaces_to_add_count = 8 - len(account)
+    spaces_to_add_count = len(account_with_longest_username) - len(account)
     spaces_to_add_counter = 0
-    spaces_to_add = " "
+    spaces_to_add = "                    "
+    while spaces_to_add_counter != spaces_to_add_count:
+        spaces_to_add += " "
+        spaces_to_add_counter += 1
+    print(account + spaces_to_add + " ----->  " + user_groups)
+
+print("\n" + "User Accounts With Sudo Access:" + "\n" + "-------------------------------")
+for account in accounts_with_sudo_access:
+        print(account)
+
+print("")
+
+print("====================================================================" + "\n" + "#4: Last Logins For Each User. >= 2 Weeks Is Flagged" + "\n" + "====================================================================")
+print("Last Login For User: " + "\n" + "--------------------")
+
+#Go through every account and print out each account's last login
+for account in account_usernames:
+
+    last_login = str("last | grep " + account + " -m1")
+    last_login = (run_a_linux_command(last_login))
+
+    #Convert to string so it can be split based on where the account login dates are.
+    last_login = str(last_login)
+    last_login = last_login.split("               ") 
+    last_login = last_login[-1] #Get only the dates
+    last_login = last_login[0:-2] #Remove the ']
+
+    #For formatting the print statement
+    spaces_to_add_count = len(account_with_longest_username) - len(account)
+    spaces_to_add_counter = 0
+    spaces_to_add = "            "
     while spaces_to_add_counter != spaces_to_add_count:
         spaces_to_add += " "
         spaces_to_add_counter += 1
 
-    print("Groups of User Account: " + account + spaces_to_add + " ----->  " + user_groups)
-
-print("\n" + "List Of User Accounts With Sudo Access:")
-for account in accounts_with_sudo_access:
-        print("    - ",account)
+    #This means that user had a recorded last login
+    if len(last_login) > 0:
+        print(account + spaces_to_add + "----->  " + last_login)
+    
+    #Means user has never logged into the system
+    else:
+        print(account + spaces_to_add + "----->  " + "Never Logged Into The System")
