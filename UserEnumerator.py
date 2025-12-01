@@ -46,7 +46,6 @@ def list_accounts_with_uid_0_and_obtain_only_user_accounts(etc_passwd_contents_l
 def extract_account_username(account):
     account = account.split(":") #Split the account by the colon delimiter
     account_username = account[0] #The account username will be the first field
-    
     return account_username
 
 #Get contents of /etc/passwd file
@@ -55,7 +54,7 @@ etc_passwd_contents_list = run_a_linux_command('cat /etc/passwd')
 #Get accounts with UID 0 as well as only the user accounts (not system accounts)
 accounts_with_uid_0, only_user_accounts = list_accounts_with_uid_0_and_obtain_only_user_accounts (etc_passwd_contents_list)
 
-print("==============================================================" + "\n" + "#1: Checking To See If Only 1 User Account (root) Has UID 0..." + "\n" + "==============================================================")
+print("====================================================================" + "\n" + "#1: Checking To See If Only 1 User Account (root) Has UID 0..." + "\n" + "====================================================================")
 
 #Display critical warning message and recommendations if more than 1 account is found to have UID 0.
 if len(accounts_with_uid_0) > 1:
@@ -78,7 +77,7 @@ if len(accounts_with_uid_0) > 1:
 else:
     print("GOOD" + "\n")
     print("Only root user account has UID 0!" + "\n")
-    print("List Of Users With UID 0:")
+    print("List Of User Accounts With UID 0:")
     #List every accounts full details which have uid 0.
     for account in accounts_with_uid_0:
         print("    - ",account)
@@ -86,8 +85,49 @@ else:
     #Display recommendations.
     print("\n" + "RECOMMENDATIONS: None" + "\n\n")
 
-print("==============================================================" + "\n" + "#2: List Of Only User Accounts (Not System Accounts)" + "\n" + "==============================================================")
+print("====================================================================" + "\n" + "#2: List Of Only User Accounts (Not System Accounts)" + "\n" + "====================================================================")
+account_usernames = [] #List that stores only the account username field from accounts extracted from /etc/passwd.
 
 for account in only_user_accounts:
-    account_username = extract_account_username(account)
+    account = account.split(":") #Split the account by the colon delimiter
+    account_username = account[0] #The account username will be the first field
+    account_usernames.append(account_username)
     print("    -" + account_username)
+
+print("\n")
+
+print("====================================================================" + "\n" + "#3: List Groups Of User Accounts. Those With Sudo Access Are Flagged" + "\n" + "====================================================================")
+
+accounts_with_sudo_access = []
+
+#Go through each user in account_usernames and print out that user's groups.
+for account in account_usernames:
+
+    #Run the id <user> command to obtain group membership of user.
+    find_groups = str('id ' + account)
+    user_groups = run_a_linux_command(find_groups)
+
+    #Convert the list to a string so that it can be split wherever there is an empty space.
+    user_groups = str(user_groups)
+    user_groups = user_groups.split(" ")
+
+    user_groups = user_groups[2] #The 2nd index position contains the list of groups.
+    user_groups = user_groups[0:-2] #Removes the '] part. 
+
+    #Check to see if that user is part of the sudoers group, if so they are added to the accounts_with_sudo_access list.
+    if "sudo" in user_groups:
+        accounts_with_sudo_access.append(account)
+
+    #For formatting the print statement
+    spaces_to_add_count = 8 - len(account)
+    spaces_to_add_counter = 0
+    spaces_to_add = " "
+    while spaces_to_add_counter != spaces_to_add_count:
+        spaces_to_add += " "
+        spaces_to_add_counter += 1
+
+    print("Groups of User Account: " + account + spaces_to_add + " ----->  " + user_groups)
+
+print("\n" + "List Of User Accounts With Sudo Access:")
+for account in accounts_with_sudo_access:
+        print("    - ",account)
