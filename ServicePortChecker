@@ -1,0 +1,80 @@
+#!/bin/bash
+#Group 1
+#Author: Pirajeen Kandasamy
+#The purpose of this script is to check:
+# 1) What services are running
+# 2) What ports are open
+# 3) Status of a few important service can be customised pending on the purpose of admin
+
+echo "================================================="
+echo "     SERVICE & PORT STATUS CHECKER From GROUP 1"
+echo "================================================"
+echo
+
+# SECTION 1: RUNNING SERVICES
+# This shows you all services that are actually running right now.
+
+
+echo " Checking Running Services..."
+echo
+systemctl list-units --type=service --state=running
+echo
+echo "---------------------------------------"
+echo
+
+# -------------------------------
+# SECTION 2: OPEN PORTS
+# Here we check which ports are listening for connections.
+# 'ss''netstat'are being used to check.
+# -------------------------------
+echo " Checking Open Ports (Listening)..."
+echo
+
+if command -v ss >/dev/null 2>&1; then
+    echo "(Using ss, hope ur system is updated)"
+    ss -tulnp
+elif command -v netstat >/dev/null 2>&1; then
+    echo "(if not dont worry we are using netstat because ss isn’t available)"
+    netstat -tulnp
+else
+    echo " Yikes! You don't have ss or netstat installed. Install net-tools to fix this as sudo."
+fi
+
+echo
+echo "---------------------------------------"
+echo
+
+
+# SECTION 3: SPECIFIC SERVICES
+# These are services people commonly use, we can always add more depending on what admin needs.
+# The script checks if the service is installed and if it is, is it running?
+
+echo " Checking Specific Services..."
+echo
+
+# List of services we want to check
+SERVICES=("ssh" "apache2" "nginx" "mysql" "mariadb" "vsftpd")
+
+for svc in "${SERVICES[@]}"; do
+
+    # Check if the service exists at all
+    if systemctl list-unit-files | grep -q "^${svc}.service"; then
+
+        # Now check if it's actually running
+        systemctl is-active --quiet "$svc"
+        if [[ $? -eq 0 ]]; then
+            echo " $svc.service is RUNNING (all good)"
+        else
+            echo " $svc.service is NOT running (might be stopped or disabled)"
+        fi
+
+    else
+        # Service isn't even installed
+        echo "! $svc.service is NOT installed on your system!"
+    fi
+done
+
+echo
+echo "======================================="
+echo "         CHECK COMPLETED"
+echo "======================================="
