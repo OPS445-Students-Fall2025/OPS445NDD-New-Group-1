@@ -1,6 +1,7 @@
 #!/bin/bash
 #Group 1
 #Author: Pirajeen Kandasamy
+# OPS445 assignment 2 - Service/Port Checker Script
 #The purpose of this script is to check:
 # 1) What services are running
 # 2) What ports are open
