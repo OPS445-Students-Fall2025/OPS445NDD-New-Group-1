@@ -1,4 +1,3 @@
-# FALL 2025 Assignment 2
 #This is the Security Audit report
 My Service/Port Checker script is a simple Bash tool that helps the user see what is happening on their Linux system.
 It performs three main checks:
@@ -18,7 +17,7 @@ The goal is to quickly understand what’s running on the system and whether ess
 This script does not take any arguments.
 You simply run it:
 
-./serviceportchecker
+./serviceportchecker (ensure chmod +x is done before running)
 
 It automatically performs all checks without requiring any user input.
 
@@ -28,9 +27,5 @@ SERVICES=("ssh" "apache2" "nginx" "mysql" "mariadb" "vsftpd")
 
 But no command-line arguments are required.
 
-
----
-
 What output it produces
-
 The script prints three sections to the terminal are running services, ports and if any of the services are running.
