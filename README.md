@@ -1,5 +1,97 @@
-<<<<<<< HEAD
-#Service/Port Checker - OPS445 GRoup 1 
+# OPS445 Assignment 2 Group 1 - Security Auditor Script
+This script calls upon 4 different scripts to run a quick security audit 
+of your local linux system.
+
+Note: These security scripts were only tested on a Linux Mint system.
+
+These are the scripts used and their purpose.
+
+## #1 User Enumerator
+* Checks to see if only 1 user account (root) has UID 0.
+* Lists only user accounts (not system ones).
+* Lists groups of each user accounts, those with sudo are flagged.
+* Shows the last login for each user account, >= 2 weeks is flagged.
+
+## #2 Permissions Auditor
+* Scans the target directory recursively. 
+* Default target directory is the current user's home directory.
+* Finds world-writable files and directories.
+* Labels higher-risk items outside /home.
+* Returns a simple, human-readable report.
+
+## #3 Service Port Checker
+* Shows all currently running services via systemctl.
+* Shows which ports are listening via ss or netstat.
+* Check the status of specified services. 
+* Those services are ssh, apache, ngnix, mysql, mariadb and vsftpf
+
+## #4 SSH Audit
+* Examines the /etc/ssh/sshd_config file.
+* If that file is not found or readable, it will display typical SSH security misconfigs.
+* Produces 'CRITICAL WARNING' alert for very dangerous misconfigs like 'PermitRootLogin Yes'.
+* Produces 'WARNING' alert for misconfigs that can be hardened.
+* Produces 'GOOD' message if config follows best practices.
+
+## Example Usage
+Runs all 4 scripts:
+```
+python3 assignment2.py
+```
+Runs all 4 scripts with target directory being '/etc' for script #2
+```
+python3 assignment2.py /etc
+```
+Runs only script #1
+```
+python3 assignment2.py -s 1
+```
+## Help
+```
+positional arguments:
+  target                The directory to scan for script #2 'Permission Auditor'. Default/no option given will use the current
+                        user's home directory.
+
+options:
+  -h, --help            show this help message and exit
+  -s SCRIPT, --script SCRIPT
+                        Select which script # (1,2,3, or 4) you want to run. Default/no option given will run all security
+                        scripts.
+```
+
+# Below is a List of More Information of Each Script/Module
+
+
+# 1) User Enumerator Module
+**Author:** Jaiveer Chawla
+
+**Student Email:** jchawla3@myseneca.ca
+
+**Personal Email:** chawla.jaiveer@gmail.com
+
+**Student ID:** jchawla3
+
+**Purpose of the script:**
+1) Will see how many user accounts have UID 0. It should only be root. If another user account has UID 0 then it basically means they have full root powers. It does this by using the shell to obtain the /etc/passwd list and then parses for the relevant information.
+
+2) It will list only the user accounts, not system ones. It does this by checking to see if the account has a home directory and/or UID greater than 1000 as UID 1-999 are typical system accounts.
+
+3) Lists all groups of every user account. It will also flag those with sudo access. This info is obtained by using the shell to run 'id username' and then parses for the relevant information.
+
+4) Lists the login of each user account and will flag those that are 2 or more weeks older. Does this by running the 'last' command as well as converting human-readable dates to unix epoch time in order to determine whether 2 or more weeks from the current date has passed.
+
+**References:**
+1) For viewing current date in epoch time and converting human-readable time to epoch time:
+   https://www.fosslinux.com/141630/epoch-time-in-linux.htm
+
+3) For obtaining the last login and logout times of each user.
+https://www.geeksforgeeks.org/linux-unix/last-command-in-linux-with-examples/
+
+4) For obtaining how much epoch seconds is 2 weeks.
+https://www.epochconverter.com/
+
+The rest of the code was created based of OPS445 Wiki material.
+
+# 2) Service Port Checker Module
 Author: Pirajeen Kandasamy  
 Student Email: pkandasamy7@myseneca.ca  
 Branch: Pirajeen  
@@ -20,9 +112,8 @@ it does 3 things
 The script will tell you if it is running, not running or not installed.
 
 Make sure that when you download the file/script make sure it is executable by using "chmod +x serviceportchecker.py
-=======
 
-# OPS445 – Group Assignment 2 – Permissions Auditor Module
+# 3) Permissions Auditor Module
 
 **Student:** Kaiyan Hu
 **Student ID: ** 178557237
@@ -111,7 +202,7 @@ The module follows all assignment requirements:
 
 >>>>>>> 2c81cee128217497447e379e501cc370d9cab9ea
 
-# OPS445 – Group Assignment 2 – SSH Configuration Auditor Module
+# 4) SSH Audit Module
 
 **Student:** Edwin Roshy  
 **Student ID:** 169475233  
