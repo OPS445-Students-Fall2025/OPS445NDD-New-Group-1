@@ -32,7 +32,7 @@ def get_permission_octal(path):
 
     except (FileNotFoundError, PermissionError):
         # If the file cannot be read (e.g.: due to permissions), simply skip it by returning None.
-        return none
+        return None
 
 
 
