@@ -85,5 +85,55 @@ The module follows all assignment requirements:
 * Uses functions
 * Clear and readable output
 * Fully tested and documented
+-------------------------------------------------------------------------------------------------------------------
+Name: Pirajeen Kandasamy
+Role in group: Responsible for adding Service and Port checks
+This module is a Service and Port Checker written in Python.
 
 
+#The Purpose of this Module
+Its main purpose is to help users quickly see:
+- Which system services are running
+- Which network ports are open
+- The status of a list of important services such as SSH, Apache, MySQL, etc.
+
+#How it works
+1. Running Services
+It uses systemctl to pull a list of services that are currently running.
+2. Open Ports
+It checks which ports are listening using either:
+
+ss or netstat 
+3. Specific Service Status, the script loops through a customizable list of services and reports:
+- Running
+- Not running
+-Not installed
+This helps quickly verify if critical services are active.
+
+#How to Run
+1. Make the file executable (if needed)
+chmod +x ServicePortChecker.py
+
+Step 2 — Run it
+ /ServicePortChecker.py (install python3 if you dont have)
+You should see output for:
+-Running services
+-Listening ports
+-Specific service status
+
+#testing
+To test this script for SSH i ran the script without SSH
+it gave me an "!not insalled"
+Then i downloaded ssh "sudo apt install openssh-server -y"
+then i ran the script again, the result was ssh.service is NOT running (might be stopped or disables"
+the ive done ssh start
+this indicated that it was working correctly
+
+#Files
+Included are ServicePortChecker.py	Main Python script that checks services and ports
+README.md	Documentation explaining how the module works
+
+## 7. Contribution Summary
+For this group assignment, I was responsible for the Service and Port checker.
+I wrote the functions for  service detections by using systemctl, using ss or netstat for port detection and srv loop for checking if the requried systems are on file.
+I also created and ran test cases on LinuxMint, such as SSH, apache2 etc
